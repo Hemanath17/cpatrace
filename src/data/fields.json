@@ -296,7 +296,7 @@
       "approval_rule": "Correction changed the value by more than $5,000 — firm policy requires second-reviewer sign-off.",
       "provenance": {
         "type": "extracted",
-        "source_doc": "doc_est_payments", "page": 1, "region": "q1",
+        "source_doc": "doc_est_payments", "page": 1, "region": ["q1", "q2", "q3", "q4"],
         "confidence": 0.88, "raw_text": "3,000.00 ×4",
         "extraction_note": "AI initially summed only Q1 and misplaced a decimal."
       },

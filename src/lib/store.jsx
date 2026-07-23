@@ -69,6 +69,7 @@ function cascade(fields, changedId) {
           value: newValue,
           state: 'locked', // computed fields stay locked...
           recomputed: true, // ...but flag that endorsement was reset
+          flags: (t.flags ?? []).filter((fl) => fl.code !== 'input_unresolved'),
         },
         {
           who: 'system',

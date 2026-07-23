@@ -86,9 +86,9 @@ export default function ReturnReview() {
             <li
               key={f.id}
               onClick={() => setSelectedId(f.id)}
-              className={`cursor-pointer rounded border px-3 py-2 text-sm ${
+              className={`cursor-pointer rounded border px-3 py-2 text-sm bg-white ${
                 selectedId === f.id ? 'border-teal-600' : 'border-slate-200'
-              } bg-white`}
+              } ${f.recomputed ? 'border-l-4 border-l-sky-400' : ''}`}
             >
               <div className="flex items-center gap-2">
                 <span className="flex-1">{f.label}</span>
@@ -120,11 +120,19 @@ export default function ReturnReview() {
       </section>
 
       <section className="sticky top-0 h-[calc(100vh-49px)] overflow-auto p-4">
-        <DocumentViewer field={selected} />
+        <DocumentViewer field={selected} onSelectField={setSelectedId} />
       </section>
 
       {detailId && (
-        <FieldDetail fieldId={detailId} onClose={() => setDetailId(null)} />
+        <FieldDetail
+          fieldId={detailId}
+          onClose={() => setDetailId(null)}
+          onSelectField={setSelectedId}
+          onAdvance={(nextId) => {
+            setSelectedId(nextId)
+            setDetailId(nextId)
+          }}
+        />
       )}
     </main>
   )
