@@ -1,0 +1,208 @@
+{
+  "_comment": "15 returns for the dashboard. 'as_of' is the app's fictional today (peak season, 34 days to deadline). state_counts feed both the queue ranking and each return's progress bar. Priority scoring lives in app code, not here — the data supplies ingredients only.",
+  "as_of": "2026-03-12",
+  "filing_deadline": "2026-04-15",
+  "current_user": { "id": "dana.k", "name": "Dana Kowalski", "role": "Preparer/Reviewer" },
+  "returns": [
+    {
+      "id": "ret_martinez",
+      "client": "Maria & Carlos Martinez",
+      "entity": "1040 (MFJ)",
+      "assignee": "dana.k",
+      "due": "2026-04-15",
+      "docs_expected": 10, "docs_received": 10,
+      "state_counts": { "ai_suggested": 6, "needs_review": 2, "verified": 2, "corrected": 1, "pending_approval": 1, "locked": 5 },
+      "blockers": [
+        { "code": "source_conflict", "detail": "Chase 1099-INT conflict unresolved" },
+        { "code": "poor_source", "detail": "Property tax bill unreadable — clearer copy requested?" }
+      ],
+      "last_activity": "2026-03-11T16:12:00Z",
+      "notes": "Extension not filed — target on-time."
+    },
+    {
+      "id": "ret_okafor",
+      "client": "Adaeze Okafor",
+      "entity": "1040 (S)",
+      "assignee": "dana.k",
+      "due": "2026-04-15",
+      "docs_expected": 4, "docs_received": 4,
+      "state_counts": { "ai_suggested": 0, "needs_review": 0, "verified": 14, "corrected": 1, "pending_approval": 0, "locked": 3 },
+      "blockers": [],
+      "last_activity": "2026-03-11T10:05:00Z",
+      "notes": "Fully reviewed — ready for partner sign-off and e-file."
+    },
+    {
+      "id": "ret_delgado_llc",
+      "client": "Delgado Landscaping LLC",
+      "entity": "1065",
+      "assignee": "dana.k",
+      "due": "2026-03-16",
+      "docs_expected": 12, "docs_received": 12,
+      "state_counts": { "ai_suggested": 3, "needs_review": 4, "verified": 22, "corrected": 2, "pending_approval": 1, "locked": 8 },
+      "blockers": [
+        { "code": "deadline_imminent", "detail": "Partnership deadline is March 16 — 4 days out" }
+      ],
+      "last_activity": "2026-03-12T08:30:00Z",
+      "notes": "K-1s can't go out until review completes."
+    },
+    {
+      "id": "ret_finch",
+      "client": "Theodore Finch",
+      "entity": "1040 (S)",
+      "assignee": "dana.k",
+      "due": "2026-04-15",
+      "docs_expected": 6, "docs_received": 3,
+      "state_counts": { "ai_suggested": 4, "needs_review": 1, "verified": 0, "corrected": 0, "pending_approval": 0, "locked": 2 },
+      "blockers": [
+        { "code": "waiting_on_client", "detail": "Missing: brokerage 1099-B, K-1 (Finch Family LP), HSA 1099-SA. Reminder sent 03/08." }
+      ],
+      "last_activity": "2026-03-08T09:12:00Z",
+      "notes": "Blocked on client — nothing actionable until docs arrive."
+    },
+    {
+      "id": "ret_yamamoto_s",
+      "client": "Yamamoto Consulting Inc.",
+      "entity": "1120-S",
+      "assignee": "dana.k",
+      "due": "2026-03-16",
+      "docs_expected": 9, "docs_received": 9,
+      "state_counts": { "ai_suggested": 11, "needs_review": 3, "verified": 6, "corrected": 0, "pending_approval": 0, "locked": 5 },
+      "blockers": [
+        { "code": "deadline_imminent", "detail": "S-corp deadline March 16 — 4 days out" }
+      ],
+      "last_activity": "2026-03-11T17:44:00Z",
+      "notes": ""
+    },
+    {
+      "id": "ret_bergstrom",
+      "client": "Ingrid Bergström",
+      "entity": "1040 (S) + FBAR",
+      "assignee": "dana.k",
+      "due": "2026-04-15",
+      "docs_expected": 8, "docs_received": 8,
+      "state_counts": { "ai_suggested": 9, "needs_review": 5, "verified": 2, "corrected": 0, "pending_approval": 0, "locked": 4 },
+      "blockers": [
+        { "code": "high_flag_density", "detail": "5 flagged fields — foreign account statements extracted with low confidence" }
+      ],
+      "last_activity": "2026-03-10T13:20:00Z",
+      "notes": "Foreign-language bank statements — extraction struggled."
+    },
+    {
+      "id": "ret_pham",
+      "client": "Linh & David Pham",
+      "entity": "1040 (MFJ)",
+      "assignee": "dana.k",
+      "due": "2026-04-15",
+      "docs_expected": 5, "docs_received": 5,
+      "state_counts": { "ai_suggested": 12, "needs_review": 0, "verified": 0, "corrected": 0, "pending_approval": 0, "locked": 3 },
+      "blockers": [],
+      "last_activity": "2026-03-09T11:00:00Z",
+      "notes": "Clean extraction, untouched — a fast win."
+    },
+    {
+      "id": "ret_castellanos",
+      "client": "Castellanos Dental PLLC",
+      "entity": "1120-S",
+      "assignee": "marcus.r",
+      "due": "2026-03-16",
+      "docs_expected": 14, "docs_received": 14,
+      "state_counts": { "ai_suggested": 2, "needs_review": 1, "verified": 30, "corrected": 3, "pending_approval": 2, "locked": 9 },
+      "blockers": [
+        { "code": "awaiting_approval", "detail": "2 corrections waiting on YOUR reviewer sign-off" }
+      ],
+      "last_activity": "2026-03-12T07:55:00Z",
+      "notes": "Marcus prepared; Dana is second reviewer on the large corrections."
+    },
+    {
+      "id": "ret_whitfield",
+      "client": "Eleanor Whitfield",
+      "entity": "1040 (S)",
+      "assignee": "dana.k",
+      "due": "2026-04-15",
+      "docs_expected": 7, "docs_received": 6,
+      "state_counts": { "ai_suggested": 8, "needs_review": 2, "verified": 4, "corrected": 1, "pending_approval": 0, "locked": 3 },
+      "blockers": [
+        { "code": "waiting_on_client", "detail": "Missing: charitable acknowledgment letter for $12k donation (required over $250)" }
+      ],
+      "last_activity": "2026-03-10T15:31:00Z",
+      "notes": "Can progress everything except Sch A charity line."
+    },
+    {
+      "id": "ret_naylor_trust",
+      "client": "Naylor Family Trust",
+      "entity": "1041",
+      "assignee": "dana.k",
+      "due": "2026-04-15",
+      "docs_expected": 6, "docs_received": 6,
+      "state_counts": { "ai_suggested": 7, "needs_review": 1, "verified": 3, "corrected": 0, "pending_approval": 0, "locked": 6 },
+      "blockers": [],
+      "last_activity": "2026-03-07T09:45:00Z",
+      "notes": ""
+    },
+    {
+      "id": "ret_abara_ext",
+      "client": "Abara Logistics Corp.",
+      "entity": "1120",
+      "assignee": "dana.k",
+      "due": "2026-10-15",
+      "docs_expected": 18, "docs_received": 5,
+      "state_counts": { "ai_suggested": 3, "needs_review": 0, "verified": 0, "corrected": 0, "pending_approval": 0, "locked": 2 },
+      "blockers": [],
+      "last_activity": "2026-02-20T10:00:00Z",
+      "notes": "Extension filed 02/18 — parked until summer."
+    },
+    {
+      "id": "ret_soderberg",
+      "client": "Karl Söderberg",
+      "entity": "1040 (S)",
+      "assignee": "dana.k",
+      "due": "2026-04-15",
+      "docs_expected": 3, "docs_received": 3,
+      "state_counts": { "ai_suggested": 0, "needs_review": 0, "verified": 9, "corrected": 0, "pending_approval": 0, "locked": 2 },
+      "blockers": [],
+      "last_activity": "2026-03-05T16:20:00Z",
+      "notes": "E-filed 03/05. Accepted by IRS 03/06. Done."
+    },
+    {
+      "id": "ret_ridgeline",
+      "client": "Ridgeline Property Group LLC",
+      "entity": "1065",
+      "assignee": "marcus.r",
+      "due": "2026-03-16",
+      "docs_expected": 16, "docs_received": 15,
+      "state_counts": { "ai_suggested": 6, "needs_review": 7, "verified": 12, "corrected": 1, "pending_approval": 0, "locked": 10 },
+      "blockers": [
+        { "code": "deadline_imminent", "detail": "March 16 deadline; 7 flags open" },
+        { "code": "waiting_on_client", "detail": "Missing: December bank statement" }
+      ],
+      "last_activity": "2026-03-12T08:10:00Z",
+      "notes": "Marcus's — visible to Dana read-only. Likely extension candidate."
+    },
+    {
+      "id": "ret_ellison",
+      "client": "Priya Ellison",
+      "entity": "1040 (HoH)",
+      "assignee": "dana.k",
+      "due": "2026-04-15",
+      "docs_expected": 4, "docs_received": 4,
+      "state_counts": { "ai_suggested": 10, "needs_review": 1, "verified": 0, "corrected": 0, "pending_approval": 0, "locked": 2 },
+      "blockers": [],
+      "last_activity": "2026-03-11T09:02:00Z",
+      "notes": "One flag: dependent-care provider EIN unreadable."
+    },
+    {
+      "id": "ret_vanburen",
+      "client": "Hendrik & Sofia Van Buren",
+      "entity": "1040 (MFJ)",
+      "assignee": "dana.k",
+      "due": "2026-04-15",
+      "docs_expected": 9, "docs_received": 9,
+      "state_counts": { "ai_suggested": 5, "needs_review": 3, "verified": 11, "corrected": 2, "pending_approval": 0, "locked": 5 },
+      "blockers": [
+        { "code": "yoy_anomaly", "detail": "Rental income down 84% YoY — AI flagged for reasonableness review" }
+      ],
+      "last_activity": "2026-03-11T13:47:00Z",
+      "notes": "Clients say property was vacant 9 months — confirm and document."
+    }
+  ]
+}

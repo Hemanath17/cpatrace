@@ -1,0 +1,311 @@
+{
+  "_comment": "Every field on the Martinez return. state + provenance per the data model. Numbers are internally consistent (totals really sum; SALT really caps; the $3,000 capital-loss limit really applies). AI extraction pass ran 2026-03-10T02:14Z. App 'today' is 2026-03-12.",
+  "return_id": "ret_martinez",
+  "fields": [
+    {
+      "id": "f_wages",
+      "form": "1040", "line": "1a", "label": "Wages, salaries, tips (W-2 box 1)",
+      "value": 142300.00,
+      "state": "ai_suggested",
+      "requires_approval": false,
+      "provenance": {
+        "type": "extracted",
+        "source_doc": "doc_w2_maria", "page": 1, "region": "1",
+        "confidence": 0.97, "raw_text": "142,300.00"
+      },
+      "flags": [],
+      "edit_history": [
+        { "who": "ai", "when": "2026-03-10T02:14:00Z", "event": "extracted", "value": 142300.00 }
+      ]
+    },
+    {
+      "id": "f_fed_withholding",
+      "form": "1040", "line": "25a", "label": "Federal tax withheld (W-2 box 2)",
+      "value": 23914.00,
+      "state": "verified",
+      "requires_approval": false,
+      "provenance": {
+        "type": "extracted",
+        "source_doc": "doc_w2_maria", "page": 1, "region": "2",
+        "confidence": 0.96, "raw_text": "23,914.00"
+      },
+      "flags": [],
+      "edit_history": [
+        { "who": "ai", "when": "2026-03-10T02:14:00Z", "event": "extracted", "value": 23914.00 },
+        { "who": "dana.k", "when": "2026-03-11T14:22:00Z", "event": "verified", "value": 23914.00 }
+      ]
+    },
+    {
+      "id": "f_state_tax",
+      "form": "Sch A", "line": "5a", "label": "State income tax paid (W-2 box 17)",
+      "value": 8537.00,
+      "state": "ai_suggested",
+      "requires_approval": false,
+      "provenance": {
+        "type": "extracted",
+        "source_doc": "doc_w2_maria", "page": 1, "region": "17",
+        "confidence": 0.95, "raw_text": "8,537.00"
+      },
+      "flags": [],
+      "edit_history": [
+        { "who": "ai", "when": "2026-03-10T02:14:00Z", "event": "extracted", "value": 8537.00 }
+      ]
+    },
+    {
+      "id": "f_int_chase",
+      "form": "Sch B", "line": "1", "label": "Interest — Chase Bank",
+      "value": 3112.40,
+      "state": "needs_review",
+      "requires_approval": false,
+      "provenance": {
+        "type": "conflicted",
+        "candidates": [
+          { "value": 2847.13, "source_doc": "doc_1099int_chase_orig", "page": 1, "region": "1", "confidence": 0.95 },
+          { "value": 3112.40, "source_doc": "doc_1099int_chase_corr", "page": 1, "region": "1", "confidence": 0.93 }
+        ],
+        "ai_pick": 1,
+        "ai_pick_reason": "Second document has the CORRECTED box checked and was issued 22 days later. IRS guidance: a corrected 1099 supersedes the original."
+      },
+      "flags": [
+        { "code": "source_conflict", "message": "Two 1099-INTs from Chase disagree ($2,847.13 vs $3,112.40). AI recommends the corrected form." }
+      ],
+      "edit_history": [
+        { "who": "ai", "when": "2026-03-10T02:14:00Z", "event": "extracted_conflict", "value": 3112.40, "note": "2 candidate sources" }
+      ]
+    },
+    {
+      "id": "f_int_fidelity",
+      "form": "Sch B", "line": "1", "label": "Interest — Fidelity",
+      "value": 1204.55,
+      "state": "verified",
+      "requires_approval": false,
+      "provenance": {
+        "type": "extracted",
+        "source_doc": "doc_1099int_fidelity", "page": 1, "region": "1",
+        "confidence": 0.98, "raw_text": "1,204.55"
+      },
+      "flags": [],
+      "edit_history": [
+        { "who": "ai", "when": "2026-03-10T02:14:00Z", "event": "extracted", "value": 1204.55 },
+        { "who": "dana.k", "when": "2026-03-11T14:25:00Z", "event": "verified", "value": 1204.55 }
+      ]
+    },
+    {
+      "id": "f_int_vanguard",
+      "form": "Sch B", "line": "1", "label": "Interest — Vanguard",
+      "value": 458.02,
+      "state": "ai_suggested",
+      "requires_approval": false,
+      "provenance": {
+        "type": "extracted",
+        "source_doc": "doc_1099int_vanguard", "page": 1, "region": "1",
+        "confidence": 0.93, "raw_text": "458.02"
+      },
+      "flags": [],
+      "edit_history": [
+        { "who": "ai", "when": "2026-03-10T02:14:00Z", "event": "extracted", "value": 458.02 }
+      ]
+    },
+    {
+      "id": "f_int_total",
+      "form": "1040", "line": "2b", "label": "Taxable interest (total)",
+      "value": 4774.97,
+      "state": "locked",
+      "lock_reason": "Computed — sum of Schedule B interest lines. Edit the inputs, not the total.",
+      "requires_approval": false,
+      "provenance": {
+        "type": "computed",
+        "formula": "sum",
+        "inputs": ["f_int_chase", "f_int_fidelity", "f_int_vanguard"],
+        "confidence_rule": "min(inputs)"
+      },
+      "flags": [
+        { "code": "yoy_anomaly", "message": "Interest income is up 61% vs 2024 ($2,960). Driven by the Chase account." },
+        { "code": "input_unresolved", "message": "An input (Chase) has an unresolved conflict — this total is provisional." }
+      ],
+      "edit_history": [
+        { "who": "ai", "when": "2026-03-10T02:14:05Z", "event": "computed", "value": 4774.97 }
+      ]
+    },
+    {
+      "id": "f_mort_int",
+      "form": "Sch A", "line": "8a", "label": "Home mortgage interest (1098 box 1)",
+      "value": 18204.77,
+      "state": "corrected",
+      "requires_approval": false,
+      "provenance": {
+        "type": "extracted",
+        "source_doc": "doc_1098_mortgage", "page": 1, "region": "1",
+        "confidence": 0.94, "raw_text": "18,204.77"
+      },
+      "flags": [],
+      "edit_history": [
+        { "who": "ai", "when": "2026-03-10T02:14:00Z", "event": "extracted", "value": 18240.77, "note": "AI read 18,240.77 — digit transposition" },
+        { "who": "dana.k", "when": "2026-03-11T15:03:00Z", "event": "corrected", "old_value": 18240.77, "value": 18204.77, "note": "Doc shows 18,204.77 — AI transposed 04→40." }
+      ]
+    },
+    {
+      "id": "f_prop_tax",
+      "form": "Sch A", "line": "5b", "label": "Real estate taxes paid",
+      "value": 6150.00,
+      "state": "needs_review",
+      "requires_approval": false,
+      "provenance": {
+        "type": "extracted",
+        "source_doc": "doc_proptax_scan", "page": 1, "region": "total_due",
+        "confidence": 0.61, "raw_text": "6,15?.00"
+      },
+      "flags": [
+        { "code": "low_source_quality", "message": "Source is a blurry phone photo — last digit ambiguous (6,150 vs 6,158). Request a clearer copy or confirm against county records." }
+      ],
+      "edit_history": [
+        { "who": "ai", "when": "2026-03-10T02:14:00Z", "event": "extracted", "value": 6150.00, "note": "low confidence" }
+      ]
+    },
+    {
+      "id": "f_salt_total",
+      "form": "Sch A", "line": "5e", "label": "State and local taxes (SALT, capped)",
+      "value": 10000.00,
+      "state": "locked",
+      "lock_reason": "Computed — min(state income tax + real estate taxes, $10,000 SALT cap). Cap is statutory.",
+      "requires_approval": false,
+      "provenance": {
+        "type": "computed",
+        "formula": "min(f_state_tax + f_prop_tax, 10000)",
+        "inputs": ["f_state_tax", "f_prop_tax"],
+        "confidence_rule": "min(inputs)"
+      },
+      "flags": [
+        { "code": "cap_applied", "message": "Uncapped total is $14,687 — the $10,000 SALT cap applies, so the property-tax ambiguity does not change this line." }
+      ],
+      "edit_history": [
+        { "who": "ai", "when": "2026-03-10T02:14:05Z", "event": "computed", "value": 10000.00 }
+      ]
+    },
+    {
+      "id": "f_cap_loss_carryover",
+      "form": "Sch D", "line": "6", "label": "Capital loss carryover from 2024",
+      "value": -8400.00,
+      "state": "locked",
+      "lock_reason": "Carried forward from the filed 2024 return. To change it, amend 2024 — link below.",
+      "resolve_at": "doc_prior_return_2024",
+      "requires_approval": false,
+      "provenance": {
+        "type": "carried_forward",
+        "source_doc": "doc_prior_return_2024", "page": 2, "region": "sch_d_carryover",
+        "source_field": "2024 Sch D carryover worksheet"
+      },
+      "flags": [],
+      "edit_history": [
+        { "who": "system", "when": "2026-03-10T02:13:50Z", "event": "carried_forward", "value": -8400.00 }
+      ]
+    },
+    {
+      "id": "f_cap_loss_allowed",
+      "form": "1040", "line": "7", "label": "Capital loss allowed this year",
+      "value": -3000.00,
+      "state": "locked",
+      "lock_reason": "Computed — capital loss deduction is limited to $3,000/yr (MFJ). Remaining $5,400 carries to 2026.",
+      "requires_approval": false,
+      "provenance": {
+        "type": "computed",
+        "formula": "max(f_cap_loss_carryover, -3000)",
+        "inputs": ["f_cap_loss_carryover"],
+        "confidence_rule": "min(inputs)"
+      },
+      "flags": [],
+      "edit_history": [
+        { "who": "ai", "when": "2026-03-10T02:14:05Z", "event": "computed", "value": -3000.00 }
+      ]
+    },
+    {
+      "id": "f_nec_income",
+      "form": "Sch C", "line": "1", "label": "Gross receipts — Carlos (1099-NEC)",
+      "value": 28500.00,
+      "state": "ai_suggested",
+      "requires_approval": false,
+      "provenance": {
+        "type": "extracted",
+        "source_doc": "doc_1099nec_carlos", "page": 1, "region": "1",
+        "confidence": 0.96, "raw_text": "28,500.00"
+      },
+      "flags": [],
+      "edit_history": [
+        { "who": "ai", "when": "2026-03-10T02:14:00Z", "event": "extracted", "value": 28500.00 }
+      ]
+    },
+    {
+      "id": "f_home_office_pct",
+      "form": "Form 8829", "line": "3", "label": "Business-use percentage of home",
+      "value": 12,
+      "unit": "percent",
+      "state": "ai_suggested",
+      "requires_approval": false,
+      "provenance": {
+        "type": "client_provided",
+        "question_id": "q_home_office_pct",
+        "source_doc": "doc_questionnaire", "page": 1, "region": "q_home_office_pct",
+        "answered_by": "Carlos J. Martinez", "answered_at": "2026-02-11"
+      },
+      "flags": [],
+      "edit_history": [
+        { "who": "client", "when": "2026-02-11T19:40:00Z", "event": "client_answered", "value": 12 }
+      ]
+    },
+    {
+      "id": "f_home_expenses",
+      "form": "Form 8829", "line": "20", "label": "Total home expenses (client-reported)",
+      "value": 24600.00,
+      "state": "ai_suggested",
+      "requires_approval": false,
+      "provenance": {
+        "type": "client_provided",
+        "question_id": "q_home_expenses",
+        "source_doc": "doc_questionnaire", "page": 1, "region": "q_home_expenses",
+        "answered_by": "Carlos J. Martinez", "answered_at": "2026-02-11"
+      },
+      "flags": [],
+      "edit_history": [
+        { "who": "client", "when": "2026-02-11T19:41:00Z", "event": "client_answered", "value": 24600.00 }
+      ]
+    },
+    {
+      "id": "f_home_office_ded",
+      "form": "Form 8829", "line": "36", "label": "Home office deduction",
+      "value": 2952.00,
+      "state": "locked",
+      "lock_reason": "Computed — home expenses × business-use %. Edit the inputs, not the result.",
+      "requires_approval": false,
+      "provenance": {
+        "type": "computed",
+        "formula": "f_home_expenses * (f_home_office_pct / 100)",
+        "inputs": ["f_home_expenses", "f_home_office_pct"],
+        "confidence_rule": "min(inputs)"
+      },
+      "flags": [],
+      "edit_history": [
+        { "who": "ai", "when": "2026-03-10T02:14:05Z", "event": "computed", "value": 2952.00 }
+      ]
+    },
+    {
+      "id": "f_est_payments",
+      "form": "1040", "line": "26", "label": "2025 estimated tax payments",
+      "value": 12000.00,
+      "state": "pending_approval",
+      "requires_approval": true,
+      "approval_rule": "Correction changed the value by more than $5,000 — firm policy requires second-reviewer sign-off.",
+      "provenance": {
+        "type": "extracted",
+        "source_doc": "doc_est_payments", "page": 1, "region": "q1",
+        "confidence": 0.88, "raw_text": "3,000.00 ×4",
+        "extraction_note": "AI initially summed only Q1 and misplaced a decimal."
+      },
+      "flags": [],
+      "edit_history": [
+        { "who": "ai", "when": "2026-03-10T02:14:00Z", "event": "extracted", "value": 1200.00, "note": "AI read $1,200 — decimal error on small type" },
+        { "who": "dana.k", "when": "2026-03-11T16:12:00Z", "event": "corrected", "old_value": 1200.00, "value": 12000.00, "note": "Four quarterly EFTPS confirmations × $3,000 = $12,000." },
+        { "who": "system", "when": "2026-03-11T16:12:01Z", "event": "sent_for_approval", "note": "Δ $10,800 exceeds $5,000 threshold → routed to reviewer" }
+      ]
+    }
+  ]
+}

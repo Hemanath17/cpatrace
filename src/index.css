@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+/* The blurry-scan effect. Applied to the rendered property-tax document.
+   This one line replaces an entire "generate a bad scan" asset pipeline. */
+.scan-poor {
+  filter: blur(1.2px) contrast(0.85) sepia(0.15);
+}
+
+/* Highlight pulse when a field click jumps the document viewer to a region.
+   Subtle on purpose — it should draw the eye once, not keep flashing. */
+@keyframes trace-pulse {
+  0% { box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.55); }
+  100% { box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.0); }
+}
+.trace-highlight {
+  animation: trace-pulse 1.2s ease-out 2;
+  outline: 2px solid rgb(13 148 136);
+  background: rgba(13, 148, 136, 0.08);
+}
