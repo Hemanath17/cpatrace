@@ -364,12 +364,20 @@ function FormulaCard({ field, onSelectField }) {
 /** Two-button strip: disagreement visible before you toggle. */
 function ConflictToggle({ field, selectedIdx, onSelect }) {
   const { documentById } = useStore()
-  const { candidates, ai_pick } = field.provenance
+  const { candidates, ai_pick, resolved, resolved_candidate } = field.provenance
+  const isResolved = resolved === true
+  const chosenIdx = isResolved ? resolved_candidate : null
 
   return (
     <div className="mb-3 shrink-0">
-      <p className="mb-1.5 text-[10px] font-semibold tracking-wide text-amber-700 uppercase">
-        Source conflict — pick which document to inspect
+      <p
+        className={`mb-1.5 text-[10px] font-semibold tracking-wide uppercase ${
+          isResolved ? 'text-teal-700' : 'text-amber-700'
+        }`}
+      >
+        {isResolved
+          ? 'Conflict resolved — inspecting chosen source'
+          : 'Source conflict — pick which document to inspect'}
       </p>
       <div className="grid grid-cols-2 gap-2">
         {candidates.map((c, i) => {
@@ -379,6 +387,7 @@ function ConflictToggle({ field, selectedIdx, onSelect }) {
           const label = isCorrected ? 'Corrected' : 'Original'
           const isAi = i === ai_pick
           const isActive = i === selectedIdx
+          const isChosen = chosenIdx === i
 
           return (
             <button
@@ -393,8 +402,12 @@ function ConflictToggle({ field, selectedIdx, onSelect }) {
             >
               <p className="text-xs font-semibold text-slate-800">
                 {label}
-                {isAi ? ' ✓' : ''}
-                {isAi && (
+                {isChosen
+                  ? ' · chosen'
+                  : isAi
+                    ? ' ✓'
+                    : ''}
+                {!isResolved && isAi && (
                   <span className="ml-1 font-normal text-slate-400">(AI pick)</span>
                 )}
               </p>
@@ -408,10 +421,16 @@ function ConflictToggle({ field, selectedIdx, onSelect }) {
           )
         })}
       </div>
-      {field.provenance.ai_pick_reason && (
+      {isResolved && field.provenance.resolution_note ? (
         <p className="mt-2 text-[11px] leading-snug text-slate-500">
-          {field.provenance.ai_pick_reason}
+          {field.provenance.resolution_note}
         </p>
+      ) : (
+        field.provenance.ai_pick_reason && (
+          <p className="mt-2 text-[11px] leading-snug text-slate-500">
+            {field.provenance.ai_pick_reason}
+          </p>
+        )
       )}
     </div>
   )
@@ -433,11 +452,24 @@ function DocPane({ field, doc, candidateIdx, attribution }) {
 
 function ConflictedDocView({ field }) {
   const { documentById } = useStore()
-  const [candidateIdx, setCandidateIdx] = useState(field.provenance.ai_pick)
+  const initialIdx =
+    field.provenance.resolved === true
+      ? field.provenance.resolved_candidate
+      : field.provenance.ai_pick
+  const [candidateIdx, setCandidateIdx] = useState(initialIdx)
 
   useEffect(() => {
-    setCandidateIdx(field.provenance.ai_pick)
-  }, [field.id, field.provenance.ai_pick])
+    const next =
+      field.provenance.resolved === true
+        ? field.provenance.resolved_candidate
+        : field.provenance.ai_pick
+    setCandidateIdx(next)
+  }, [
+    field.id,
+    field.provenance.ai_pick,
+    field.provenance.resolved,
+    field.provenance.resolved_candidate,
+  ])
 
   const candidate = field.provenance.candidates[candidateIdx]
   const doc = documentById(candidate?.source_doc)
