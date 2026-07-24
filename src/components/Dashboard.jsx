@@ -117,29 +117,36 @@ function ReturnCard({ r, lead, muted }) {
       to={`/return/${r.id}`}
       className={`block rounded-lg border bg-white transition-colors ${
         lead
-          ? 'border-slate-300 border-l-[3px] border-l-teal-600 p-4 shadow-sm hover:border-teal-600'
-          : 'border-slate-200 p-3.5 hover:border-teal-600'
+          ? 'border-slate-300 border-l-4 border-l-teal-600 p-6 shadow-md hover:border-teal-600'
+          : 'border-slate-200 p-4 hover:border-teal-600'
       } ${muted ? 'opacity-70' : ''}`}
     >
+      {lead && (
+        <p className="mb-2 text-[11px] font-semibold tracking-wide text-teal-700 uppercase">
+          Start here
+        </p>
+      )}
       <div className="flex items-baseline justify-between gap-3">
         <span
-          className={`truncate font-semibold text-slate-900 ${lead ? 'text-[15px]' : 'text-sm'}`}
+          className={`truncate font-semibold text-slate-900 ${
+            lead ? 'font-display text-lg tracking-tight' : 'text-sm'
+          }`}
         >
           {r.client}
         </span>
         <DueLabel daysLeft={r.daysLeft} done={r.done} />
       </div>
 
-      <p className="mt-0.5 text-xs text-slate-500">
+      <p className="mt-1 text-xs text-slate-500">
         {r.entity} · {PEOPLE[r.assignee] ?? r.assignee}
         {!isWired && (
-          <span className="ml-1.5 rounded bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-500">
+          <span className="ml-2 rounded bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-500">
             sample
           </span>
         )}
       </p>
 
-      <p className="mt-2 text-xs text-slate-700">{stateSummary(r.state_counts)}</p>
+      <p className="mt-3 text-xs text-slate-700">{stateSummary(r.state_counts)}</p>
 
       <BlockerChips blockers={r.blockers} />
       <ProgressBar counts={r.state_counts} />
@@ -186,11 +193,11 @@ export default function Dashboard() {
 
   return (
     <main className="mx-auto max-w-3xl px-6 py-6">
-      <div className="mb-5">
-        <h1 className="text-xl font-semibold tracking-tight text-slate-900">
+      <div className="mb-6">
+        <h1 className="text-2xl text-slate-900">
           Good morning, {meta.user.name.split(' ')[0]}
         </h1>
-        <p className="mt-0.5 text-sm text-slate-500">
+        <p className="mt-1 text-sm text-slate-500">
           Ranked by what needs you first — not alphabetically, not by date added.
         </p>
       </div>
@@ -210,10 +217,10 @@ export default function Dashboard() {
       </div>
 
       <section>
-        <h2 className="mb-2 text-[11px] font-semibold tracking-wide text-slate-400 uppercase">
+        <h2 className="mb-3 text-[11px] font-semibold tracking-wide text-slate-400 uppercase">
           Work on these
         </h2>
-        <ul className="space-y-2">
+        <ul className="space-y-3">
           {active.map((r, i) => (
             <li key={r.id}>
               <ReturnCard r={r} lead={i === 0} />
@@ -223,11 +230,11 @@ export default function Dashboard() {
       </section>
 
       {blocked.length > 0 && (
-        <section className="mt-7">
+        <section className="mt-6">
           <h2 className="mb-1 text-[11px] font-semibold tracking-wide text-slate-400 uppercase">
             Blocked on client
           </h2>
-          <p className="mb-2 text-xs text-slate-500">
+          <p className="mb-3 text-xs text-slate-500">
             Unfinished, but nothing you do today moves them.
           </p>
           <ul className="space-y-2">
@@ -241,7 +248,7 @@ export default function Dashboard() {
       )}
 
       {completed.length > 0 && (
-        <section className="mt-7">
+        <section className="mt-6">
           <button
             type="button"
             onClick={() => setShowCompleted((v) => !v)}
@@ -250,12 +257,12 @@ export default function Dashboard() {
             {showCompleted ? '▾' : '▸'} Completed ({completed.length})
           </button>
           {showCompleted && (
-            <ul className="mt-2 space-y-1">
+            <ul className="mt-3 space-y-2">
               {completed.map((r) => (
                 <li key={r.id}>
                   <Link
                     to={`/return/${r.id}`}
-                    className="flex items-baseline justify-between rounded border border-slate-200 bg-white px-3 py-2 text-sm hover:border-teal-600"
+                    className="flex items-baseline justify-between rounded-md border border-slate-200 bg-white px-4 py-3 text-sm hover:border-teal-600"
                   >
                     <span className="text-slate-600">{r.client}</span>
                     <span className="text-xs text-slate-400">

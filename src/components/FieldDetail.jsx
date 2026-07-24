@@ -454,15 +454,13 @@ export default function FieldDetail({
         aria-label="Field detail"
       >
         {/* Header */}
-        <header className="shrink-0 border-b border-slate-200 px-5 pt-4 pb-4">
+        <header className="shrink-0 border-b border-slate-200 px-6 py-4">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
               <p className="text-xs text-slate-500">
                 {f.form} · line {f.line}
               </p>
-              <h2 className="mt-0.5 text-base font-semibold text-slate-900">
-                {f.label}
-              </h2>
+              <h2 className="mt-1 text-lg text-slate-900">{f.label}</h2>
             </div>
             <button
               type="button"
@@ -476,13 +474,13 @@ export default function FieldDetail({
           <p className="mt-3 text-3xl font-semibold tabular-nums tracking-tight text-slate-900">
             {formatFieldValue(f)}
           </p>
-          <div className="mt-2 flex flex-wrap items-center gap-2">
+          <div className="mt-3 flex flex-wrap items-center gap-2">
             <StateBadge state={f.state} />
             <ConfidenceBadge value={confidence} />
           </div>
         </header>
 
-        <div className="min-h-0 flex-1 space-y-5 overflow-y-auto px-5 py-4">
+        <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-6 py-6">
           {f.recomputed && (
             <div className="rounded-md border border-sky-300 bg-sky-50 px-3 py-2 text-sm text-sky-900">
               Recomputed — an input changed, so this value was recalculated.
@@ -491,7 +489,7 @@ export default function FieldDetail({
 
           {/* What the AI did */}
           <section>
-            <h3 className="mb-1.5 text-[10px] font-semibold tracking-wide text-slate-400 uppercase">
+            <h3 className="mb-2 text-[11px] font-semibold tracking-wide text-slate-400 uppercase">
               What the AI did
             </h3>
             <p className="text-sm leading-relaxed text-slate-700">{sentence}</p>
@@ -503,7 +501,7 @@ export default function FieldDetail({
               {f.flags.map((flag) => (
                 <div
                   key={flag.code}
-                  className="rounded-md border border-amber-300 bg-amber-50 px-3 py-2.5 text-sm text-amber-950"
+                  className="rounded-md border border-amber-300 bg-amber-50 px-3 py-3 text-sm text-amber-950"
                 >
                   {flag.message}
                 </div>
@@ -514,7 +512,7 @@ export default function FieldDetail({
           {/* Evidence */}
           {f.provenance.type !== 'computed' && (
             <section>
-              <h3 className="mb-2 text-[10px] font-semibold tracking-wide text-slate-400 uppercase">
+              <h3 className="mb-2 text-[11px] font-semibold tracking-wide text-slate-400 uppercase">
                 Evidence
               </h3>
               <div className="h-80 overflow-hidden rounded-md border border-slate-200 bg-slate-50">
@@ -527,7 +525,7 @@ export default function FieldDetail({
 
           {/* Actions */}
           <section>
-            <h3 className="mb-2 text-[10px] font-semibold tracking-wide text-slate-400 uppercase">
+            <h3 className="mb-2 text-[11px] font-semibold tracking-wide text-slate-400 uppercase">
               Actions
             </h3>
             <ActionZone
@@ -541,14 +539,14 @@ export default function FieldDetail({
 
           {/* History */}
           <section>
-            <h3 className="mb-2 text-[10px] font-semibold tracking-wide text-slate-400 uppercase">
+            <h3 className="mb-3 text-[11px] font-semibold tracking-wide text-slate-400 uppercase">
               History
             </h3>
             <ol className="space-y-3 border-l border-slate-200 pl-3">
               {[...f.edit_history].reverse().map((h, i) => (
                 <li key={`${h.when}-${h.event}-${i}`} className="relative text-sm">
                   <span className="absolute top-1.5 -left-[17px] h-2 w-2 rounded-full bg-slate-300" />
-                  <div className="flex flex-wrap items-center gap-1.5">
+                  <div className="flex flex-wrap items-center gap-2">
                     <WhoChip who={h.who} />
                     <span className="text-xs text-slate-400">
                       {formatWhen(h.when)}
@@ -558,18 +556,18 @@ export default function FieldDetail({
                     </span>
                   </div>
                   {'old_value' in h && (
-                    <p className="mt-0.5 tabular-nums text-slate-800">
+                    <p className="mt-1 tabular-nums text-slate-800">
                       {formatHistoryValue(h.old_value, f)} →{' '}
                       {formatHistoryValue(h.value, f)}
                     </p>
                   )}
                   {'value' in h && !('old_value' in h) && typeof h.value === 'number' && (
-                    <p className="mt-0.5 tabular-nums text-slate-600">
+                    <p className="mt-1 tabular-nums text-slate-600">
                       {formatHistoryValue(h.value, f)}
                     </p>
                   )}
                   {h.note && (
-                    <p className="mt-0.5 text-xs text-slate-500">{h.note}</p>
+                    <p className="mt-1 text-xs text-slate-500">{h.note}</p>
                   )}
                 </li>
               ))}

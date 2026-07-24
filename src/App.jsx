@@ -5,8 +5,8 @@ import ReturnReview from './components/ReturnReview.jsx'
 export default function App() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900">
-      <header className="border-b border-slate-200 bg-white px-6 py-3 flex items-baseline gap-3">
-        <Link to="/" className="font-semibold tracking-tight text-lg">
+      <header className="flex items-baseline gap-3 border-b border-slate-200 bg-white px-6 py-3">
+        <Link to="/" className="font-display text-lg font-semibold tracking-tight">
           CPA<span className="text-teal-700"> Trace</span>
         </Link>
         <span className="text-xs text-slate-500">Every number, back to its source.</span>
