@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import Sidebar from './components/Sidebar.jsx'
 import Dashboard from './components/Dashboard.jsx'
 import ReturnReview from './components/ReturnReview.jsx'
+import PreviewScreen from './components/PreviewScreen.jsx'
 
 function TopBar() {
   return (
@@ -48,6 +49,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/return/:id" element={<ReturnReview />} />
+            <Route path="/preview/:section" element={<PreviewScreen />} />
           </Routes>
         </div>
       </div>

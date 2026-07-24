@@ -7,11 +7,11 @@ import { Link, useLocation } from 'react-router-dom'
 const NAV = [
   { label: 'Dashboard', to: '/', icon: 'grid', live: true },
   { label: 'Returns', to: '/', icon: 'file', live: true, badge: 15 },
-  { label: 'Clients', to: null, icon: 'users' },
-  { label: 'Documents', to: null, icon: 'folder', badge: 42 },
-  { label: 'Messages', to: null, icon: 'mail', badge: 7 },
-  { label: 'Billing', to: null, icon: 'card' },
-  { label: 'Reports', to: null, icon: 'chart' },
+  { label: 'Clients', to: '/preview/clients', icon: 'users', live: true },
+  { label: 'Documents', to: '/preview/documents', icon: 'folder', live: true, badge: 42 },
+  { label: 'Messages', to: '/preview/messages', icon: 'mail', live: true, badge: 7 },
+  { label: 'Billing', to: '/preview/billing', icon: 'card', live: true },
+  { label: 'Reports', to: '/preview/reports', icon: 'chart', live: true },
 ]
 
 const ICONS = {
@@ -51,26 +51,14 @@ export default function Sidebar() {
 
       <nav className="mt-2 flex-1 px-3">
         {NAV.map((item, i) => {
-          const active = item.live && item.to === '/' && pathname === '/' && item.label === 'Dashboard'
+          const active =
+            item.label === 'Dashboard'
+              ? pathname === '/'
+              : item.label === 'Returns'
+                ? pathname.startsWith('/return/')
+                : pathname === item.to
           const base =
             'flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors'
-          if (!item.live) {
-            return (
-              <div
-                key={i}
-                title="Part of the full product — not built in this prototype"
-                className={`${base} cursor-default text-slate-500`}
-              >
-                <Icon name={item.icon} />
-                <span className="flex-1">{item.label}</span>
-                {item.badge && (
-                  <span className="rounded-full bg-slate-700/60 px-1.5 py-0.5 text-[10px] text-slate-400">
-                    {item.badge}
-                  </span>
-                )}
-              </div>
-            )
-          }
           return (
             <Link
               key={i}
@@ -83,8 +71,14 @@ export default function Sidebar() {
             >
               <Icon name={item.icon} />
               <span className="flex-1">{item.label}</span>
-              {item.badge && (
-                <span className="rounded-full bg-teal-600 px-1.5 py-0.5 text-[10px] font-medium text-white">
+              {item.badge != null && (
+                <span
+                  className={`rounded-full px-1.5 py-0.5 text-[10px] font-medium ${
+                    active
+                      ? 'bg-teal-600 text-white'
+                      : 'bg-slate-700/60 text-slate-400'
+                  }`}
+                >
                   {item.badge}
                 </span>
               )}

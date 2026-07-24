@@ -1,44 +1,10 @@
 // ============================================================================
-// RETURN REVIEW (challenge 01) — SKELETON. The core screen. You build this.
+// RETURN REVIEW (challenge 01) — the core screen.
 // ----------------------------------------------------------------------------
-// Split view. LEFT: the return, field by field. RIGHT: DocumentViewer.
-// The defining interaction: click a field → right pane shows its source doc
-// with the exact region highlighted (trace-highlight CSS class, already in
-// index.css).
-//
-// SPEC — build in this order:
-//  1. Layout: grid grid-cols-[1fr_1fr] gap-0, full height minus header.
-//     Left scrolls independently; right is sticky.
-//  2. Sign-off banner across the top (the anti-rubber-stamp rule, already
-//     computed): signoffBlockers().length > 0
-//       → amber banner "Not ready to file — N items unreviewed" with count
-//         breakdown; clicking it scrolls to the first blocker.
-//       → else emerald "All fields reviewed — ready for sign-off".
-//     This banner is the state machine made visible. Show it in the video.
-//  3. Field list: group by form ("Form 1040", "Schedule A", ...) with small
-//     section headers. Render FieldRow (below) per field.
-//  4. Selection state: selectedFieldId in useState here; clicking a row
-//     selects it AND drives the right pane (doc + region from the field's
-//     provenance). For conflicted fields default to the AI's pick candidate.
-//  5. FieldDetail slide-over (separate file) opens on "Details" or
-//     double-click. Slide-over, NOT a route — context preservation is a
-//     graded design decision.
-//
-// FieldRow SPEC (inline component below):
-//  - Row: label + form/line (small, slate-500) | value (tabular-nums,
-//    font-medium) | ConfidenceBadge | StateBadge | actions.
-//  - Actions by state (the affordance system doing its job):
-//      ai_suggested:      [✓ Verify] [✎ Correct]   — verify is ONE CLICK.
-//      needs_review:      [Review →] (opens detail — no quick-verify here:
-//                         a flagged field deserves eyes, so the fast path is
-//                         deliberately removed. Say this in the video.)
-//      verified:          quiet ✓, hover reveals [Reopen]
-//      corrected:         quiet, hover reveals [Edit]
-//      pending_approval:  [Approve] [Reject] (you're the second reviewer)
-//      locked:            🔒 + lock_reason as tooltip/subtext + resolve link
-//  - Flags render as a thin amber strip under the row (flag.message).
-//  - field.recomputed === true → brief sky-blue left border: "recomputed
-//    after an input changed" — the cascade made visible.
+// Split view. LEFT: the return, field by field, grouped by form.
+// RIGHT: DocumentViewer — click a field, its source highlights.
+// Sign-off banner up top is the anti-rubber-stamp rule made visible.
+// FieldDetail opens as a slide-over (not a route) to preserve context.
 // ============================================================================
 
 import { useMemo, useState } from 'react'
@@ -89,39 +55,39 @@ function FieldRow({ f, selected, onSelect, onOpenDetail, confidence }) {
         }}
         onDoubleClick={() => onOpenDetail(f.id)}
         className={[
-          'cursor-pointer rounded-md border bg-white px-4 py-3',
+          'group cursor-pointer border-b border-slate-100 px-4 py-2.5 transition-colors',
           selected
-            ? 'border-teal-600 bg-teal-50/40 ring-1 ring-teal-600/30'
-            : 'border-slate-200 hover:border-slate-300',
-          f.recomputed ? 'border-l-[3px] border-l-sky-400' : '',
+            ? 'bg-teal-50 ring-1 ring-inset ring-teal-500/40'
+            : 'hover:bg-slate-50',
+          f.recomputed ? 'border-l-[3px] border-l-sky-400' : 'border-l-[3px] border-l-transparent',
         ].join(' ')}
       >
         <div className="flex items-center gap-3">
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm text-slate-800">{f.label}</p>
-            <p className="mt-1 text-xs text-slate-500">
+            <p className="mt-0.5 text-[11px] text-slate-400">
               {f.form} · line {f.line}
               {f.recomputed && (
-                <span className="ml-2 text-sky-700">recomputed</span>
+                <span className="ml-2 font-medium text-sky-600">recomputed</span>
               )}
             </p>
           </div>
 
-          <span className="w-28 shrink-0 text-right text-sm font-medium tabular-nums text-slate-900">
+          <span className="w-24 shrink-0 text-right text-sm font-medium tabular-nums text-slate-900">
             {formatFieldValue(f)}
           </span>
 
-          <div className="flex w-36 shrink-0 justify-end">
+          <div className="hidden w-32 shrink-0 justify-end lg:flex">
             <ConfidenceBadge value={confidence} />
           </div>
 
-          <div className="flex w-[7.5rem] shrink-0 justify-end">
+          <div className="flex w-[6.5rem] shrink-0 justify-end">
             <StateBadge state={f.state} small />
           </div>
 
           <button
             type="button"
-            className="shrink-0 text-xs font-medium text-teal-700 hover:text-teal-900"
+            className="shrink-0 text-xs font-medium text-teal-700 opacity-0 transition-opacity hover:text-teal-900 group-hover:opacity-100"
             onClick={(e) => {
               e.stopPropagation()
               onOpenDetail(f.id)
@@ -132,12 +98,17 @@ function FieldRow({ f, selected, onSelect, onOpenDetail, confidence }) {
         </div>
 
         {f.flags?.length > 0 && (
-          <div className="mt-2 space-y-1 border-t border-amber-200/80 pt-2">
-            {f.flags.map((flag) => (
-              <p key={flag.code} className="text-xs leading-snug text-amber-900">
-                {flag.message}
-              </p>
-            ))}
+          <div className="mt-2 flex items-start gap-2 rounded bg-amber-50 px-2.5 py-1.5">
+            <svg className="mt-0.5 h-3.5 w-3.5 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10" /><path d="M12 8v5M12 16h.01" />
+            </svg>
+            <div className="space-y-1">
+              {f.flags.map((flag) => (
+                <p key={flag.code} className="text-[11px] leading-snug text-amber-900">
+                  {flag.message}
+                </p>
+              ))}
+            </div>
           </div>
         )}
       </div>
@@ -162,85 +133,98 @@ export default function ReturnReview() {
 
   if (!isMartinez)
     return (
-      <main className="px-6 py-6 text-slate-500">
-        <p className="mb-2 font-display text-lg font-semibold text-slate-800">
-          {ret?.client}
-        </p>
-        <p className="text-sm">
-          Sample return — full field data is wired for the Martinez return.{' '}
-          <Link className="font-medium text-teal-700 underline" to="/return/ret_martinez">
-            Open Martinez →
+      <main className="mx-auto max-w-2xl px-6 py-10">
+        <Link to="/" className="text-xs font-medium text-slate-400 hover:text-teal-700">
+          ← Back to queue
+        </Link>
+        <div className="mt-4 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+          <h1 className="font-display text-xl font-semibold text-slate-800">
+            {ret?.client}
+          </h1>
+          <p className="mt-1 text-sm text-slate-500">{ret?.entity} · tax year 2025</p>
+          <div className="mt-4 rounded-md border border-amber-200 bg-amber-50 px-4 py-3">
+            <p className="text-sm text-amber-900">
+              This is a sample return used to populate the dashboard queue. Full
+              field-level data — with source documents, confidence, and the
+              review workflow — is wired for the Martinez return.
+            </p>
+          </div>
+          <Link
+            className="mt-4 inline-block rounded-md bg-teal-700 px-4 py-2 text-sm font-medium text-white hover:bg-teal-800"
+            to="/return/ret_martinez"
+          >
+            Open the Martinez return →
           </Link>
-        </p>
+        </div>
       </main>
     )
 
   const ready = blockers.length === 0
 
   return (
-    <main className="grid h-[calc(100vh-49px)] grid-cols-2">
-      <section className="flex min-h-0 flex-col border-r border-slate-200 bg-slate-50/50">
-        <div className="shrink-0 space-y-3 border-b border-slate-200 bg-white px-4 py-3">
-          <div className="flex items-baseline justify-between gap-3">
-            <div>
-              <Link
-                to="/"
-                className="text-xs font-medium text-slate-400 hover:text-teal-700"
-              >
-                ← Queue
-              </Link>
-              <h1 className="mt-1 text-lg text-slate-900">{ret?.client}</h1>
-              <p className="mt-1 text-xs text-slate-500">
-                {ret?.entity} · tax year 2025
-              </p>
-            </div>
-          </div>
-
-          <button
-            type="button"
-            onClick={() => {
-              if (blockers[0]) setSelectedId(blockers[0].id)
-            }}
-            className={`w-full rounded-md border px-3 py-2 text-left text-sm ${
-              ready
-                ? 'border-emerald-200 bg-emerald-50 text-emerald-900'
-                : 'border-amber-300 bg-amber-50 text-amber-950'
-            }`}
-          >
-            {ready
-              ? 'All fields reviewed — ready for sign-off'
-              : `Not ready to file — ${blockers.length} items unreviewed`}
-          </button>
+    <div className="flex h-full min-h-0 flex-col">
+      {/* Return header bar */}
+      <div className="flex shrink-0 items-center gap-4 border-b border-slate-200 bg-white px-5 py-3">
+        <div className="min-w-0">
+          <Link to="/" className="text-xs font-medium text-slate-400 hover:text-teal-700">
+            ← Queue
+          </Link>
+          <h1 className="font-display text-lg font-semibold tracking-tight text-slate-900">
+            {ret?.client}
+          </h1>
         </div>
+        <span className="hidden text-xs text-slate-400 sm:inline">
+          {ret?.entity} · tax year 2025
+        </span>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
-          <div className="space-y-6">
-            {groups.map(([form, fields]) => (
-              <div key={form}>
-                <h2 className="mb-2 text-[11px] font-semibold tracking-wide text-slate-400 uppercase">
+        <button
+          type="button"
+          onClick={() => {
+            if (blockers[0]) setSelectedId(blockers[0].id)
+          }}
+          className={`ml-auto flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm font-medium ${
+            ready
+              ? 'border-emerald-300 bg-emerald-50 text-emerald-800'
+              : 'border-amber-300 bg-amber-50 text-amber-900 hover:bg-amber-100'
+          }`}
+        >
+          <span className={`h-2 w-2 rounded-full ${ready ? 'bg-emerald-500' : 'bg-amber-500'}`} />
+          {ready
+            ? 'Ready for sign-off'
+            : `${blockers.length} items need review before filing`}
+        </button>
+      </div>
+
+      {/* Split view: field list (wider) | document pane */}
+      <div className="grid min-h-0 flex-1 grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
+        <section className="flex min-h-0 flex-col overflow-y-auto border-r border-slate-200 bg-white">
+          {groups.map(([form, fields]) => (
+            <div key={form}>
+              <div className="sticky top-0 z-10 border-b border-slate-100 bg-slate-50/95 px-4 py-1.5 backdrop-blur">
+                <h2 className="text-[11px] font-semibold uppercase tracking-wide text-slate-500">
                   {formHeading(form)}
                 </h2>
-                <ul className="space-y-2">
-                  {fields.map((f) => (
-                    <FieldRow
-                      key={f.id}
-                      f={f}
-                      selected={selectedId === f.id}
-                      onSelect={setSelectedId}
-                      onOpenDetail={setDetailId}
-                      confidence={store.confidenceOf(f)}
-                    />
-                  ))}
-                </ul>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+              <ul>
+                {fields.map((f) => (
+                  <FieldRow
+                    key={f.id}
+                    f={f}
+                    selected={selectedId === f.id}
+                    onSelect={setSelectedId}
+                    onOpenDetail={setDetailId}
+                    confidence={store.confidenceOf(f)}
+                  />
+                ))}
+              </ul>
+            </div>
+          ))}
+        </section>
 
-      <section className="sticky top-0 h-[calc(100vh-49px)] overflow-auto bg-white px-4 py-4">
-        <DocumentViewer field={selected} onSelectField={setSelectedId} />
-      </section>
+        <section className="min-h-0 overflow-auto bg-slate-100 px-4 py-4">
+          <DocumentViewer field={selected} onSelectField={setSelectedId} />
+        </section>
+      </div>
 
       {detailId && (
         <FieldDetail
@@ -253,6 +237,6 @@ export default function ReturnReview() {
           }}
         />
       )}
-    </main>
+    </div>
   )
 }
