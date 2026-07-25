@@ -1,0 +1,224 @@
+{
+  "_comment": "Source documents for the Martinez return. Each doc carries 'render' data so the app can draw it as an HTML mock — no PDFs needed. bbox_pct values are percentage positions for highlight overlays.",
+  "documents": [
+    {
+      "id": "doc_w2_maria",
+      "type": "W-2",
+      "title": "W-2 — Sundial Health Systems (Maria)",
+      "filename": "w2_maria_martinez_2025.pdf",
+      "pages": 1,
+      "quality": "clean",
+      "issuer": "Sundial Health Systems Inc.",
+      "issuer_ein": "86-XXXXX41",
+      "recipient": "Maria T. Martinez",
+      "tax_year": 2025,
+      "received": "2026-02-02",
+      "render": {
+        "kind": "w2",
+        "boxes": [
+          { "box": "1",  "label": "Wages, tips, other compensation", "value": "142,300.00", "bbox_pct": { "top": 34, "left": 51, "width": 21, "height": 5 } },
+          { "box": "2",  "label": "Federal income tax withheld",     "value": "23,914.00",  "bbox_pct": { "top": 34, "left": 74, "width": 21, "height": 5 } },
+          { "box": "16", "label": "State wages",                     "value": "142,300.00", "bbox_pct": { "top": 78, "left": 28, "width": 20, "height": 5 } },
+          { "box": "17", "label": "State income tax",                "value": "8,537.00",   "bbox_pct": { "top": 78, "left": 50, "width": 18, "height": 5 } }
+        ]
+      }
+    },
+    {
+      "id": "doc_1099int_chase_orig",
+      "type": "1099-INT",
+      "title": "1099-INT — Chase Bank (ORIGINAL)",
+      "filename": "1099int_chase_2025.pdf",
+      "pages": 1,
+      "quality": "clean",
+      "issuer": "JPMorgan Chase Bank, N.A.",
+      "recipient": "Maria T. Martinez",
+      "tax_year": 2025,
+      "received": "2026-01-28",
+      "corrected_flag": false,
+      "superseded_by": "doc_1099int_chase_corr",
+      "render": {
+        "kind": "1099int",
+        "corrected_checkbox": false,
+        "boxes": [
+          { "box": "1", "label": "Interest income", "value": "2,847.13", "bbox_pct": { "top": 42, "left": 55, "width": 18, "height": 5 } }
+        ]
+      }
+    },
+    {
+      "id": "doc_1099int_chase_corr",
+      "type": "1099-INT",
+      "title": "1099-INT — Chase Bank (CORRECTED)",
+      "filename": "1099int_chase_2025_CORRECTED.pdf",
+      "pages": 1,
+      "quality": "clean",
+      "issuer": "JPMorgan Chase Bank, N.A.",
+      "recipient": "Maria T. Martinez",
+      "tax_year": 2025,
+      "received": "2026-02-19",
+      "corrected_flag": true,
+      "supersedes": "doc_1099int_chase_orig",
+      "render": {
+        "kind": "1099int",
+        "corrected_checkbox": true,
+        "boxes": [
+          { "box": "1", "label": "Interest income", "value": "3,112.40", "bbox_pct": { "top": 42, "left": 55, "width": 18, "height": 5 } }
+        ]
+      }
+    },
+    {
+      "id": "doc_1099int_fidelity",
+      "type": "1099-INT",
+      "title": "1099-INT — Fidelity Investments",
+      "filename": "1099int_fidelity_2025.pdf",
+      "pages": 1,
+      "quality": "clean",
+      "issuer": "Fidelity Brokerage Services LLC",
+      "recipient": "Maria T. Martinez",
+      "tax_year": 2025,
+      "received": "2026-01-31",
+      "corrected_flag": false,
+      "render": {
+        "kind": "1099int",
+        "corrected_checkbox": false,
+        "boxes": [
+          { "box": "1", "label": "Interest income", "value": "1,204.55", "bbox_pct": { "top": 42, "left": 55, "width": 18, "height": 5 } }
+        ]
+      }
+    },
+    {
+      "id": "doc_1099int_vanguard",
+      "type": "1099-INT",
+      "title": "1099-INT — Vanguard",
+      "filename": "1099int_vanguard_2025.pdf",
+      "pages": 1,
+      "quality": "clean",
+      "issuer": "The Vanguard Group",
+      "recipient": "Carlos J. Martinez",
+      "tax_year": 2025,
+      "received": "2026-02-05",
+      "corrected_flag": false,
+      "render": {
+        "kind": "1099int",
+        "corrected_checkbox": false,
+        "boxes": [
+          { "box": "1", "label": "Interest income", "value": "458.02", "bbox_pct": { "top": 42, "left": 55, "width": 18, "height": 5 } }
+        ]
+      }
+    },
+    {
+      "id": "doc_1098_mortgage",
+      "type": "1098",
+      "title": "1098 — Mortgage Interest (Rocket Mortgage)",
+      "filename": "1098_rocket_2025.pdf",
+      "pages": 1,
+      "quality": "clean",
+      "issuer": "Rocket Mortgage, LLC",
+      "recipient": "Maria T. & Carlos J. Martinez",
+      "tax_year": 2025,
+      "received": "2026-02-08",
+      "render": {
+        "kind": "1098",
+        "boxes": [
+          { "box": "1", "label": "Mortgage interest received", "value": "18,204.77", "bbox_pct": { "top": 40, "left": 55, "width": 19, "height": 5 } }
+        ]
+      }
+    },
+    {
+      "id": "doc_proptax_scan",
+      "type": "Property tax bill",
+      "title": "Maricopa County property tax bill (phone photo)",
+      "filename": "IMG_4417.jpg",
+      "pages": 1,
+      "quality": "poor",
+      "quality_note": "Phone photo, motion blur across the amount line. Last digit ambiguous (0 vs 8).",
+      "issuer": "Maricopa County Treasurer",
+      "recipient": "Martinez, Maria T & Carlos J",
+      "tax_year": 2025,
+      "received": "2026-03-02",
+      "render": {
+        "kind": "scan",
+        "css_effect": "blur(1.2px) contrast(0.85)",
+        "boxes": [
+          { "box": "total_due", "label": "Total tax paid 2025", "value": "6,15?.00", "bbox_pct": { "top": 61, "left": 58, "width": 17, "height": 4 } }
+        ]
+      }
+    },
+    {
+      "id": "doc_1099nec_carlos",
+      "type": "1099-NEC",
+      "title": "1099-NEC — Halcyon Design Co. (Carlos)",
+      "filename": "1099nec_halcyon_2025.pdf",
+      "pages": 1,
+      "quality": "clean",
+      "issuer": "Halcyon Design Co.",
+      "recipient": "Carlos J. Martinez",
+      "tax_year": 2025,
+      "received": "2026-02-12",
+      "render": {
+        "kind": "1099nec",
+        "boxes": [
+          { "box": "1", "label": "Nonemployee compensation", "value": "28,500.00", "bbox_pct": { "top": 44, "left": 55, "width": 19, "height": 5 } }
+        ]
+      }
+    },
+    {
+      "id": "doc_prior_return_2024",
+      "type": "Prior-year return",
+      "title": "2024 Form 1040 (filed) — Martinez",
+      "filename": "martinez_1040_2024_filed.pdf",
+      "pages": 2,
+      "quality": "clean",
+      "issuer": "CPA Trace (filed 2025-04-09)",
+      "recipient": "Maria T. & Carlos J. Martinez",
+      "tax_year": 2024,
+      "received": "2026-01-15",
+      "render": {
+        "kind": "prior_return",
+        "boxes": [
+          { "box": "sch_d_carryover", "page": 2, "label": "Capital loss carryover to 2025 (Sch D worksheet)", "value": "(8,400.00)", "bbox_pct": { "top": 72, "left": 60, "width": 18, "height": 4 } }
+        ]
+      }
+    },
+    {
+      "id": "doc_est_payments",
+      "type": "Payment record",
+      "title": "2025 estimated payment confirmations (EFTPS)",
+      "filename": "eftps_2025_confirmations.pdf",
+      "pages": 1,
+      "quality": "fair",
+      "quality_note": "Four confirmations on one page; small type.",
+      "issuer": "EFTPS / U.S. Treasury",
+      "recipient": "Carlos J. Martinez",
+      "tax_year": 2025,
+      "received": "2026-02-25",
+      "render": {
+        "kind": "payment_list",
+        "boxes": [
+          { "box": "q1", "label": "04/15/2025 payment", "value": "3,000.00", "bbox_pct": { "top": 34, "left": 62, "width": 14, "height": 4 } },
+          { "box": "q2", "label": "06/16/2025 payment", "value": "3,000.00", "bbox_pct": { "top": 44, "left": 62, "width": 14, "height": 4 } },
+          { "box": "q3", "label": "09/15/2025 payment", "value": "3,000.00", "bbox_pct": { "top": 54, "left": 62, "width": 14, "height": 4 } },
+          { "box": "q4", "label": "01/15/2026 payment", "value": "3,000.00", "bbox_pct": { "top": 64, "left": 62, "width": 14, "height": 4 } }
+        ]
+      }
+    },
+    {
+      "id": "doc_questionnaire",
+      "type": "Client questionnaire",
+      "title": "2025 tax organizer — client answers",
+      "filename": "organizer_martinez_2025.pdf",
+      "pages": 1,
+      "quality": "clean",
+      "issuer": "Client-submitted 2026-02-11",
+      "recipient": "—",
+      "tax_year": 2025,
+      "received": "2026-02-11",
+      "render": {
+        "kind": "questionnaire",
+        "boxes": [
+          { "box": "q_home_office_pct", "label": "What % of your home is used exclusively for business?", "value": "12%", "bbox_pct": { "top": 38, "left": 70, "width": 10, "height": 4 } },
+          { "box": "q_home_expenses",   "label": "Total 2025 home expenses (rent/mortgage, utilities, insurance)", "value": "24,600", "bbox_pct": { "top": 52, "left": 68, "width": 13, "height": 4 } }
+        ]
+      }
+    }
+  ]
+}
