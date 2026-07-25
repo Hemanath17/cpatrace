@@ -1,23 +1,15 @@
+// Adds the login gate. Everything below the gate is your existing shell, unchanged.
+import { useState } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Sidebar from './components/Sidebar.jsx'
 import Dashboard from './components/Dashboard.jsx'
 import ReturnReview from './components/ReturnReview.jsx'
 import PreviewScreen from './components/PreviewScreen.jsx'
+import Landing from './components/Landing.jsx'
 
-function TopBar() {
+function TopBar({ onSignOut }) {
   return (
-    <header className="flex items-center gap-4 border-b border-slate-200 bg-white px-6 py-2.5">
-      <div className="relative hidden max-w-md flex-1 md:block">
-        <input
-          type="text"
-          placeholder="Search returns, clients, documents…"
-          className="w-full rounded-md border border-slate-200 bg-slate-50 py-1.5 pl-9 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-teal-500 focus:bg-white focus:outline-none"
-        />
-        <svg className="absolute left-3 top-2 h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
-          <circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" />
-        </svg>
-      </div>
-
+    <header className="relative flex items-center gap-4 border-b border-slate-200 bg-white px-6 py-2.5">
       <div className="ml-auto flex items-center gap-3">
         <span className="hidden text-xs text-slate-400 sm:inline">
           Mar 12, 2026 · 34 days to deadline
@@ -31,7 +23,10 @@ function TopBar() {
             <p className="text-[10px] text-slate-400">Preparer / Reviewer</p>
           </div>
         </div>
-        <button className="rounded-md border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-500 hover:bg-slate-50">
+        <button
+          onClick={onSignOut}
+          className="rounded-md border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-500 hover:bg-slate-50"
+        >
           Sign out
         </button>
       </div>
@@ -40,11 +35,17 @@ function TopBar() {
 }
 
 export default function App() {
+  const [signedIn, setSignedIn] = useState(false)
+
+  if (!signedIn) {
+    return <Landing onEnter={() => setSignedIn(true)} />
+  }
+
   return (
     <div className="flex min-h-screen bg-slate-100 text-slate-900">
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
-        <TopBar />
+        <TopBar onSignOut={() => setSignedIn(false)} />
         <div className="flex-1 overflow-auto">
           <Routes>
             <Route path="/" element={<Dashboard />} />

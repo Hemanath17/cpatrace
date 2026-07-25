@@ -2,7 +2,7 @@
   "_comment": "15 returns for the dashboard. 'as_of' is the app's fictional today (peak season, 34 days to deadline). state_counts feed both the queue ranking and each return's progress bar. Priority scoring lives in app code, not here — the data supplies ingredients only.",
   "as_of": "2026-03-12",
   "filing_deadline": "2026-04-15",
-  "current_user": { "id": "dana.k", "name": "Dana Kowalski", "role": "Preparer/Reviewer" },
+  "current_user": { "id": "dana.k", "name": "Camila Ceal", "role": "Preparer/Reviewer" },
   "returns": [
     {
       "id": "ret_martinez",

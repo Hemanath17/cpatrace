@@ -149,6 +149,7 @@ export default function Dashboard() {
   const { returns, meta } = useStore()
   const navigate = useNavigate()
   const [filter, setFilter] = useState(null) // null | 'flags' | 'due' | 'approve'
+  const [query, setQuery] = useState('')
 
   const ranked = rankReturns(returns, meta.as_of)
   const mine = ranked.filter((r) => r.assignee === meta.user.id)
@@ -168,6 +169,14 @@ export default function Dashboard() {
   if (filter === 'flags') active = active.filter((r) => r.state_counts.needs_review > 0)
   if (filter === 'due') active = active.filter((r) => r.daysLeft <= 7)
   if (filter === 'approve') active = active.filter((r) => r.awaitingMyApproval)
+
+  const q = query.trim().toLowerCase()
+  const matchesQuery = (r) =>
+    !q || r.client.toLowerCase().includes(q) || r.entity.toLowerCase().includes(q)
+
+  const activeFiltered = active.filter(matchesQuery)
+  const blockedFiltered = blocked.filter(matchesQuery)
+  const completedFiltered = completed.filter(matchesQuery)
 
   const open = (id) => navigate(`/return/${id}`)
 
@@ -193,6 +202,19 @@ export default function Dashboard() {
           active={false} onClick={() => {}} />
       </div>
 
+      <div className="relative mb-3 max-w-sm">
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search by client or return type…"
+          className="w-full rounded-md border border-slate-200 bg-white py-2 pl-9 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-teal-500 focus:outline-none"
+        />
+        <svg className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+          <circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" />
+        </svg>
+      </div>
+
       <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
         <div className="flex items-center justify-between border-b border-slate-100 px-5 py-3">
           <h2 className="text-sm font-semibold text-slate-700">
@@ -216,10 +238,10 @@ export default function Dashboard() {
             </tr>
           </thead>
           <tbody>
-            {active.map((r, i) => (
+            {activeFiltered.map((r, i) => (
               <Row key={r.id} r={r} lead={i === 0 && !filter} onOpen={open} />
             ))}
-            {active.length === 0 && (
+            {activeFiltered.length === 0 && (
               <tr>
                 <td colSpan={5} className="py-8 text-center text-sm text-slate-400">
                   Nothing matches this filter.
@@ -229,7 +251,7 @@ export default function Dashboard() {
           </tbody>
         </table>
 
-        {blocked.length > 0 && !filter && (
+        {blockedFiltered.length > 0 && !filter && (
           <>
             <div className="border-t border-slate-100 bg-slate-50 px-5 py-2">
               <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400">
@@ -238,7 +260,7 @@ export default function Dashboard() {
             </div>
             <table className="w-full">
               <tbody>
-                {blocked.map((r) => (
+                {blockedFiltered.map((r) => (
                   <Row key={r.id} r={r} onOpen={open} />
                 ))}
               </tbody>
@@ -246,12 +268,12 @@ export default function Dashboard() {
           </>
         )}
 
-        {completed.length > 0 && !filter && (
+        {completedFiltered.length > 0 && !filter && (
           <div className="border-t border-slate-100 bg-slate-50 px-5 py-2.5">
             <span className="text-[11px] text-slate-400">
-              {completed.length} completed returns hidden ·{' '}
+              {completedFiltered.length} completed returns hidden ·{' '}
               <button
-                onClick={() => open(completed[0].id)}
+                onClick={() => open(completedFiltered[0].id)}
                 className="text-teal-700 hover:underline"
               >
                 view a filed example

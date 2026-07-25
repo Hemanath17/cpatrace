@@ -50,6 +50,7 @@ import { useEffect, useState } from 'react'
 import { useStore } from '../lib/store.jsx'
 import StateBadge, { ConfidenceBadge } from './StateBadge.jsx'
 import DocumentViewer from './DocumentViewer.jsx'
+import threadsData from '../data/threads.json'
 
 const APPROVAL_DELTA = 5000
 const UNREVIEWED = ['ai_suggested', 'needs_review', 'pending_approval']
@@ -102,6 +103,28 @@ function formulaInWords(field) {
   return `Computed from ${n} input${n === 1 ? '' : 's'}`
 }
 
+function isUncertain(field, confidence) {
+  if (field.provenance?.type === 'conflicted') return true
+  if (field.state === 'needs_review') return true
+  if (typeof confidence === 'number' && confidence < 0.7) return true
+  return false
+}
+
+const VERDICT_STYLES = {
+  agree: {
+    label: 'Agrees', badge: 'bg-emerald-100 text-emerald-700',
+    box: 'border-emerald-200 bg-emerald-50/60',
+  },
+  disagree: {
+    label: 'Disagrees', badge: 'bg-amber-100 text-amber-800',
+    box: 'border-amber-200 bg-amber-50/60',
+  },
+  uncertain: {
+    label: 'Uncertain', badge: 'bg-slate-200 text-slate-700',
+    box: 'border-slate-200 bg-slate-50',
+  },
+}
+
 /** One plain-English sentence — never a provenance data dump. */
 function aiDidSentence(field, documentById) {
   const p = field.provenance
@@ -149,6 +172,73 @@ function WhoChip({ who }) {
     >
       {who}
     </span>
+  )
+}
+
+const VISIBILITY = {
+  internal: { label: 'Internal — firm only', cls: 'border-amber-200 bg-amber-50', tag: 'bg-amber-100 text-amber-800' },
+  client_visible: { label: 'Visible to client', cls: 'border-sky-200 bg-sky-50/50', tag: 'bg-sky-100 text-sky-700' },
+}
+
+function Discussion({ fieldId }) {
+  const thread = threadsData.threads.find((t) => t.field_id === fieldId)
+  if (!thread) return null
+
+  const ownerLabel =
+    thread.owner === 'client' ? 'Waiting on client'
+    : thread.owner === 'internal' ? 'Internal discussion'
+    : 'Waiting on you'
+
+  return (
+    <section>
+      <div className="mb-2 flex items-center justify-between">
+        <h3 className="text-[11px] font-semibold tracking-wide text-slate-400 uppercase">
+          Discussion
+        </h3>
+        <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${
+          thread.owner === 'internal' ? 'bg-slate-200 text-slate-600' : 'bg-rose-100 text-rose-700'
+        }`}>
+          {ownerLabel}
+        </span>
+      </div>
+
+      <p className="mb-2 text-xs text-slate-500">{thread.subject}</p>
+
+      <div className="space-y-2">
+        {thread.messages.map((m, i) => {
+          const v = VISIBILITY[m.visibility]
+          return (
+            <div key={i} className={`rounded-lg border p-3 ${v.cls}`}>
+              <div className="flex items-center gap-2">
+                <span className={`flex h-6 w-6 items-center justify-center rounded-full text-[10px] font-semibold text-white ${
+                  m.role === 'client' ? 'bg-sky-500' : 'bg-teal-700'
+                }`}>
+                  {m.author.split(' ').map((w) => w[0]).join('').slice(0, 2)}
+                </span>
+                <span className="text-xs font-medium text-slate-800">{m.author}</span>
+                <span className={`rounded px-1.5 py-0.5 text-[9px] font-medium ${v.tag}`}>
+                  {m.visibility === 'internal' ? 'Internal' : 'Client-visible'}
+                </span>
+                <span className="ml-auto text-[10px] text-slate-400">{formatWhen(m.when)}</span>
+              </div>
+              <p className="mt-1.5 text-sm leading-relaxed text-slate-700">{m.body}</p>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Composer — present for realism; messages are pre-seeded (see README). */}
+      <div className="mt-3 flex items-center gap-2">
+        <input
+          disabled
+          placeholder="Write a reply… (demo — threads are pre-seeded)"
+          className="flex-1 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-400"
+        />
+        <button disabled className="rounded-md bg-slate-200 px-3 py-2 text-sm text-slate-400">
+          Send
+        </button>
+      </div>
+    </section>
   )
 }
 
@@ -403,6 +493,32 @@ export default function FieldDetail({
   const f = store.getField(fieldId)
   const [entered, setEntered] = useState(false)
   const [approvalExplainer, setApprovalExplainer] = useState(false)
+  const [opinion, setOpinion] = useState(null)      // {verdict, reasoning, suggested_value, source}
+  const [opinionLoading, setOpinionLoading] = useState(false)
+
+  // Reset the second opinion whenever we move to a different field.
+  useEffect(() => {
+    setOpinion(null)
+    setOpinionLoading(false)
+  }, [fieldId])
+
+  async function runAiCheck() {
+    setOpinionLoading(true)
+    setOpinion(null)
+    try {
+      const result = await store.secondOpinion(fieldId)
+      setOpinion(result)
+    } catch {
+      setOpinion({
+        verdict: 'uncertain',
+        reasoning: 'The second-opinion service is unavailable right now.',
+        suggested_value: null,
+        source: 'error',
+      })
+    } finally {
+      setOpinionLoading(false)
+    }
+  }
 
   useEffect(() => {
     const id = requestAnimationFrame(() => setEntered(true))
@@ -494,6 +610,77 @@ export default function FieldDetail({
             </h3>
             <p className="text-sm leading-relaxed text-slate-700">{sentence}</p>
           </section>
+
+          {/* AI second opinion (LLM-as-a-judge) */}
+          <section>
+            <div className="flex items-center justify-between">
+              <h3 className="text-[11px] font-semibold tracking-wide text-slate-400 uppercase">
+                Second opinion
+              </h3>
+              <button
+                type="button"
+                onClick={runAiCheck}
+                disabled={opinionLoading}
+                className={
+                  isUncertain(f, confidence)
+                    ? 'inline-flex items-center gap-1.5 rounded-md bg-red-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-60'
+                    : 'inline-flex items-center gap-1.5 rounded-md border border-slate-300 bg-white px-2.5 py-1 text-xs font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-60'
+                }
+              >
+                <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.5 3h5l1 3 3 1v5l-3 1-1 3h-5l-1-3-3-1V7l3-1z" />
+                  <circle cx="12" cy="10" r="2" />
+                </svg>
+                {opinionLoading ? 'Checking…' : 'AI check'}
+              </button>
+            </div>
+
+            {opinionLoading && (
+              <p className="mt-2 text-xs text-slate-400">
+                Consulting an independent model…
+              </p>
+            )}
+
+            {opinion && (
+              <div className={`mt-2 rounded-lg border p-3 ${VERDICT_STYLES[opinion.verdict]?.box ?? 'border-slate-200 bg-slate-50'}`}>
+                <div className="flex items-center gap-2">
+                  <span className={`rounded-full px-2 py-0.5 text-[10px] font-semibold ${VERDICT_STYLES[opinion.verdict]?.badge ?? 'bg-slate-200 text-slate-700'}`}>
+                    {VERDICT_STYLES[opinion.verdict]?.label ?? opinion.verdict}
+                  </span>
+                  <span className="text-[10px] text-slate-400">
+                    second reviewer{opinion.source === 'gemini' ? ' · Gemini' : ''}
+                  </span>
+                </div>
+                <p className="mt-2 text-sm leading-relaxed text-slate-700">
+                  {opinion.reasoning}
+                </p>
+
+                {typeof opinion.suggested_value === 'number' &&
+                  opinion.suggested_value !== f.value &&
+                  f.state !== 'locked' && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        store.correct(f.id, opinion.suggested_value,
+                          'Applied AI second-opinion suggestion')
+                        setOpinion(null)
+                        advanceAfterAction()
+                      }}
+                      className="mt-3 rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-800 hover:bg-slate-50"
+                    >
+                      Apply {formatFieldValue({ ...f, value: opinion.suggested_value })} →
+                    </button>
+                  )}
+
+                <p className="mt-2 text-[10px] text-slate-400">
+                  Advisory only — you decide whether to accept it.
+                </p>
+              </div>
+            )}
+          </section>
+
+          {/* Discussion (challenge 02 — collaboration) */}
+          <Discussion fieldId={f.id} />
 
           {/* Flags */}
           {f.flags?.length > 0 && (

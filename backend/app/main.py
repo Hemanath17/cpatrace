@@ -12,13 +12,13 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
+load_dotenv()
+
 # Import models BEFORE create_db_and_tables so SQLModel knows the tables.
 from app import models  # noqa: F401  (registers the FieldModel table)
 from app.database import create_db_and_tables
 from app.seed import seed
-from app.routers import returns, fields, upload
-
-load_dotenv()
+from app.routers import returns, fields, upload, second_opinion
 
 
 @asynccontextmanager
@@ -56,6 +56,7 @@ app.add_middleware(
 app.include_router(returns.router)
 app.include_router(fields.router)
 app.include_router(upload.router)
+app.include_router(second_opinion.router)
 
 
 @app.get("/")

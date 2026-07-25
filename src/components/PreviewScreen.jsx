@@ -10,7 +10,9 @@
 // via /preview/:section.
 // ============================================================================
 
+import { useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import UploadModal from './UploadModal.jsx'
 
 const SECTIONS = {
   documents: {
@@ -50,14 +52,24 @@ const SECTIONS = {
   },
   messages: {
     title: 'Messages',
-    blurb: 'client and internal firm communication, tied to returns',
+    blurb: 'client and internal firm communication, tied to returns and fields',
     kind: 'threads',
     threads: [
-      ['MM', 'bg-teal-600', 'Maria Martinez', 'Re: property tax bill — is a clearer photo okay?', '2h'],
-      ['DL', 'bg-indigo-500', 'Delgado Landscaping', 'K-1s ready once review wraps — timeline?', '5h'],
-      ['IB', 'bg-rose-500', 'Ingrid Bergström', 'Sent the foreign account statements', 'Yesterday'],
-      ['TW', 'bg-amber-500', 'Theodore Finch', 'Still waiting on my brokerage 1099-B', '2d'],
-      ['—', 'bg-slate-400', 'Internal · Marcus R.', 'Flagged the SALT cap on Castellanos', '3d'],
+      {
+        initials: 'MT', tint: 'bg-teal-600', name: 'Martinez · Property tax bill',
+        context: 'Schedule A, line 5b', preview: 'Carlos: I\'ll grab a better photo tonight and send it over.',
+        when: '2h', owner: 'Waiting on client', ownerTint: 'bg-rose-100 text-rose-700',
+      },
+      {
+        initials: 'MR', tint: 'bg-indigo-500', name: 'Internal · Chase 1099 conflict',
+        context: 'Schedule B, line 1 · firm-only', preview: 'Marcus: Agreed — corrected supersedes. Note it in the workpapers.',
+        when: '5h', owner: 'Internal', ownerTint: 'bg-slate-200 text-slate-600',
+      },
+      {
+        initials: 'MT', tint: 'bg-teal-600', name: 'Martinez · Home office %',
+        context: 'Form 8829, line 3', preview: 'Camila: Can you confirm that\'s the dedicated office only?',
+        when: '1d', owner: 'Waiting on client', ownerTint: 'bg-rose-100 text-rose-700',
+      },
     ],
   },
   billing: {
@@ -149,16 +161,22 @@ function Table({ section }) {
 function Threads({ section }) {
   return (
     <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
-      {section.threads.map(([initials, tint, name, preview, when], i) => (
+      {section.threads.map((t, i) => (
         <div key={i} className="flex items-center gap-3 border-b border-slate-100 px-5 py-3.5 last:border-0 hover:bg-slate-50">
-          <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white ${tint}`}>
-            {initials}
+          <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white ${t.tint}`}>
+            {t.initials}
           </span>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium text-slate-800">{name}</p>
-            <p className="truncate text-xs text-slate-500">{preview}</p>
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-medium text-slate-800">{t.name}</p>
+              <span className="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] text-slate-500">{t.context}</span>
+            </div>
+            <p className="truncate text-xs text-slate-500">{t.preview}</p>
           </div>
-          <span className="shrink-0 text-[11px] text-slate-400">{when}</span>
+          <span className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium ${t.ownerTint}`}>
+            {t.owner}
+          </span>
+          <span className="shrink-0 text-[11px] text-slate-400">{t.when}</span>
         </div>
       ))}
     </div>
@@ -181,6 +199,7 @@ function Tiles({ section }) {
 export default function PreviewScreen() {
   const { section } = useParams()
   const data = SECTIONS[section]
+  const [showUpload, setShowUpload] = useState(false)
 
   if (!data) {
     return (
@@ -195,9 +214,24 @@ export default function PreviewScreen() {
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-6">
-      <h1 className="font-display text-2xl tracking-tight text-slate-900">{data.title}</h1>
-      <p className="mb-5 mt-1 text-sm text-slate-500">Firm workspace</p>
-      <Banner blurb={data.blurb} />
+      <div className="mb-5 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="font-display text-2xl tracking-tight text-slate-900">{data.title}</h1>
+          <p className="mt-1 text-sm text-slate-500">Firm workspace</p>
+        </div>
+        {section === 'documents' && (
+          <button
+            onClick={() => setShowUpload(true)}
+            className="inline-flex shrink-0 items-center gap-2 rounded-md bg-teal-700 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-800"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 16V4m0 0L8 8m4-4l4 4M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
+            </svg>
+            Upload document
+          </button>
+        )}
+      </div>
+      {section !== 'messages' && <Banner blurb={data.blurb} />}
       {data.kind === 'threads' ? (
         <Threads section={data} />
       ) : data.kind === 'tiles' ? (
@@ -205,6 +239,7 @@ export default function PreviewScreen() {
       ) : (
         <Table section={data} />
       )}
+      {showUpload && <UploadModal onClose={() => setShowUpload(false)} />}
     </main>
   )
 }

@@ -1,15 +1,13 @@
 import { Link, useLocation } from 'react-router-dom'
 
-// Nav shell. "Returns" + "Dashboard" are real; the rest are present to show
-// where the full product lives (documents, messaging, billing). They're
-// deliberately inert — see README. A reviewer should read this as "the
-// reviewer workflow is built deeply; the surrounding product is scaffolded."
+// Nav shell. "Returns" is the landing queue; the rest show where the full
+// product lives (documents, messaging, billing). Preview routes are
+// illustrative — see README.
 const NAV = [
-  { label: 'Dashboard', to: '/', icon: 'grid', live: true },
   { label: 'Returns', to: '/', icon: 'file', live: true, badge: 15 },
   { label: 'Clients', to: '/preview/clients', icon: 'users', live: true },
-  { label: 'Documents', to: '/preview/documents', icon: 'folder', live: true, badge: 42 },
-  { label: 'Messages', to: '/preview/messages', icon: 'mail', live: true, badge: 7 },
+  { label: 'Documents', to: '/preview/documents', icon: 'folder', live: true, badge: 10 },
+  { label: 'Messages', to: '/preview/messages', icon: 'mail', live: true, badge: 3 },
   { label: 'Billing', to: '/preview/billing', icon: 'card', live: true },
   { label: 'Reports', to: '/preview/reports', icon: 'chart', live: true },
 ]
@@ -51,12 +49,9 @@ export default function Sidebar() {
 
       <nav className="mt-2 flex-1 px-3">
         {NAV.map((item, i) => {
-          const active =
-            item.label === 'Dashboard'
-              ? pathname === '/'
-              : item.label === 'Returns'
-                ? pathname.startsWith('/return/')
-                : pathname === item.to
+          const active = item.to === '/'
+            ? pathname === '/'
+            : pathname === item.to
           const base =
             'flex items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors'
           return (

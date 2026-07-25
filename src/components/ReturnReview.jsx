@@ -10,6 +10,7 @@
 import { useMemo, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { useStore } from '../lib/store.jsx'
+import { deriveStatus, STAGES } from '../lib/status.js'
 import StateBadge, { ConfidenceBadge } from './StateBadge.jsx'
 import DocumentViewer from './DocumentViewer.jsx'
 import FieldDetail from './FieldDetail.jsx'
@@ -121,15 +122,53 @@ export default function ReturnReview() {
   const store = useStore()
   const [selectedId, setSelectedId] = useState(null)
   const [detailId, setDetailId] = useState(null)
+  const [audience, setAudience] = useState('cpa') // 'cpa' | 'client'
 
   const isMartinez = id === 'ret_martinez'
   const ret = store.returns.find((r) => r.id === id)
+
+  // Backend-backed: show loading / error before rendering fields.
+  if (isMartinez && store.loading) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <div className="flex items-center gap-3 text-slate-500">
+          <svg className="h-5 w-5 animate-spin text-teal-600" viewBox="0 0 24 24" fill="none">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.4 0 0 5.4 0 12h4z" />
+          </svg>
+          <span className="text-sm">Loading return from server…</span>
+        </div>
+      </div>
+    )
+  }
+
+  if (isMartinez && store.error) {
+    return (
+      <div className="flex h-full items-center justify-center px-6">
+        <div className="max-w-md rounded-lg border border-red-200 bg-red-50 p-5 text-center">
+          <p className="text-sm font-medium text-red-800">Couldn’t reach the server</p>
+          <p className="mt-1 text-xs text-red-600">{store.error}</p>
+          <p className="mt-2 text-xs text-slate-500">
+            The API may be waking up (free tier sleeps after inactivity). Give it ~30s.
+          </p>
+          <button
+            onClick={() => store.reload()}
+            className="mt-3 rounded-md bg-red-700 px-4 py-1.5 text-sm text-white hover:bg-red-800"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   const blockers = store.signoffBlockers()
   const selected = selectedId ? store.getField(selectedId) : null
   const groups = useMemo(
     () => groupFields(store.fieldsList),
     [store.fieldsList],
   )
+  const status = deriveStatus(store.fieldsList)
 
   if (!isMartinez)
     return (
@@ -193,6 +232,77 @@ export default function ReturnReview() {
             ? 'Ready for sign-off'
             : `${blockers.length} items need review before filing`}
         </button>
+      </div>
+
+      {/* Status tracker (challenge 06) */}
+      <div className="shrink-0 border-b border-slate-200 bg-white px-5 py-3">
+        {/* Stage stepper */}
+        <div className="flex items-center gap-1">
+          {STAGES.map((s, i) => {
+            const done = i < status.stageIndex
+            const current = i === status.stageIndex
+            return (
+              <div key={s.key} className="flex flex-1 items-center gap-1 last:flex-none">
+                <div className="flex items-center gap-1.5">
+                  <span className={`flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-semibold ${
+                    done ? 'bg-teal-600 text-white'
+                    : current ? 'bg-teal-100 text-teal-700 ring-2 ring-teal-500'
+                    : 'bg-slate-100 text-slate-400'
+                  }`}>
+                    {done ? '✓' : i + 1}
+                  </span>
+                  <span className={`whitespace-nowrap text-xs ${
+                    current ? 'font-semibold text-slate-800' : done ? 'text-slate-500' : 'text-slate-400'
+                  }`}>
+                    {s.label}
+                  </span>
+                </div>
+                {i < STAGES.length - 1 && (
+                  <div className={`h-px flex-1 ${i < status.stageIndex ? 'bg-teal-400' : 'bg-slate-200'}`} />
+                )}
+              </div>
+            )
+          })}
+        </div>
+
+        {/* The five answers + audience toggle */}
+        <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2 text-xs">
+          <span className="text-slate-500">
+            <span className="font-medium text-slate-700">Progress:</span> {status.percent}% ({status.reviewed}/{status.total})
+          </span>
+          <span className="text-slate-500">
+            <span className="font-medium text-slate-700">Next:</span> {status.nextAction}
+          </span>
+          <span className="text-slate-500">
+            <span className="font-medium text-slate-700">Owner:</span> {status.owner}
+          </span>
+          {status.blocking && (
+            <span className="rounded bg-amber-50 px-2 py-0.5 text-amber-800">
+              Blocking: {status.blocking}
+            </span>
+          )}
+
+          {/* Same status, two audiences */}
+          <div className="ml-auto flex items-center gap-1 rounded-md border border-slate-200 p-0.5">
+            <button
+              onClick={() => setAudience('cpa')}
+              className={`rounded px-2 py-0.5 text-[11px] ${audience === 'cpa' ? 'bg-slate-800 text-white' : 'text-slate-500'}`}
+            >
+              CPA view
+            </button>
+            <button
+              onClick={() => setAudience('client')}
+              className={`rounded px-2 py-0.5 text-[11px] ${audience === 'client' ? 'bg-slate-800 text-white' : 'text-slate-500'}`}
+            >
+              Client view
+            </button>
+          </div>
+        </div>
+
+        {/* Audience-specific summary */}
+        <p className="mt-2 rounded-md bg-slate-50 px-3 py-1.5 text-xs text-slate-600">
+          {audience === 'cpa' ? status.cpaSummary : status.clientSummary}
+        </p>
       </div>
 
       {/* Split view: field list (wider) | document pane */}

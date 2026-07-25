@@ -27,4 +27,6 @@ dist-ssr
 backend/venv/
 backend/cpatrace.db
 backend/.env
+.env
 __pycache__/
+*.bak

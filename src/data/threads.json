@@ -1,0 +1,77 @@
+{
+  "_comment": "Hardcoded collaboration threads for challenge 02. Each thread is tied to a specific field, distinguishes internal vs client-visible messages, and tracks who owns the next action. One CPA (Camila), one client (Carlos/Maria Martinez), one colleague (Marcus).",
+  "threads": [
+    {
+      "id": "th_prop_tax",
+      "field_id": "f_prop_tax",
+      "return_id": "ret_martinez",
+      "subject": "Property tax bill — unreadable scan",
+      "owner": "client",
+      "status": "open",
+      "messages": [
+        {
+          "author": "Camila Ceal",
+          "role": "cpa",
+          "visibility": "internal",
+          "when": "2026-03-10T09:12:00Z",
+          "body": "Last digit on the property tax photo is unreadable — could be 6,150 or 6,158. Need a clearer copy before we can lock Schedule A line 5b."
+        },
+        {
+          "author": "Camila Ceal",
+          "role": "cpa",
+          "visibility": "client_visible",
+          "when": "2026-03-10T09:15:00Z",
+          "body": "Hi Carlos — the property tax bill photo came through a little blurry on the total line. Could you send a clearer picture or the PDF from the county site when you get a chance? Thank you!"
+        },
+        {
+          "author": "Carlos Martinez",
+          "role": "client",
+          "visibility": "client_visible",
+          "when": "2026-03-11T18:40:00Z",
+          "body": "Sure, I'll grab a better photo tonight and send it over."
+        }
+      ]
+    },
+    {
+      "id": "th_chase_conflict",
+      "field_id": "f_int_chase",
+      "return_id": "ret_martinez",
+      "subject": "Which Chase 1099-INT do we use?",
+      "owner": "internal",
+      "status": "open",
+      "messages": [
+        {
+          "author": "Camila Ceal",
+          "role": "cpa",
+          "visibility": "internal",
+          "when": "2026-03-11T10:02:00Z",
+          "body": "Chase sent an original ($2,847.13) and a corrected ($3,112.40) 1099-INT. Planning to use the corrected one — it's dated later and has the CORRECTED box checked. Agree?"
+        },
+        {
+          "author": "Marcus Reyes",
+          "role": "cpa",
+          "visibility": "internal",
+          "when": "2026-03-11T10:20:00Z",
+          "body": "Agreed — corrected supersedes. Just note it in the workpapers in case the client asks why it changed from last year."
+        }
+      ]
+    },
+    {
+      "id": "th_home_office",
+      "field_id": "f_home_office_pct",
+      "return_id": "ret_martinez",
+      "subject": "Confirm home office percentage",
+      "owner": "client",
+      "status": "open",
+      "messages": [
+        {
+          "author": "Camila Ceal",
+          "role": "cpa",
+          "visibility": "client_visible",
+          "when": "2026-03-11T14:05:00Z",
+          "body": "Hi Carlos — you listed 12% of the home as used exclusively for business. Can you confirm that's the dedicated office space only (not shared rooms)? Want to make sure we claim this correctly."
+        }
+      ]
+    }
+  ]
+}
